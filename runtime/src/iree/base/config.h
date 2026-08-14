@@ -172,11 +172,11 @@ typedef IREE_DEVICE_SIZE_T iree_device_size_t;
 // can be stripped out. Socket functions will still be defined but return
 // IREE_STATUS_UNIMPLEMENTED. Override with -DIREE_SOCKETS_ENABLE=1 for custom
 // platforms that provide a POSIX-compatible socket layer.
-#if defined(IREE_PLATFORM_WASM)
+#if defined(IREE_PLATFORM_WASM) || defined(IREE_PLATFORM_GENERIC)
 #define IREE_SOCKETS_ENABLE 0
 #else
 #define IREE_SOCKETS_ENABLE 1
-#endif  // IREE_PLATFORM_WASM
+#endif  // IREE_PLATFORM_WASM || IREE_PLATFORM_GENERIC
 #endif  // !IREE_SOCKETS_ENABLE
 
 #if !defined(IREE_MAX_PATH)
