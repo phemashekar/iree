@@ -14,10 +14,31 @@
 #include "mlir/IR/DialectImplementation.h"
 #include "mlir/IR/OpImplementation.h"
 #include "mlir/Parser/Parser.h"
+#include "mlir/Transforms/InliningUtils.h"
 
 namespace mlir::iree_compiler::IREE::HAL::Loader {
 
 namespace {
+
+// Used to control inlining behavior.
+struct HALLoaderInlinerInterface : DialectInlinerInterface {
+  using DialectInlinerInterface::DialectInlinerInterface;
+
+  bool isLegalToInline(Operation *call, Operation *callable,
+                       bool wouldBeCloned) const final {
+    return true;
+  }
+
+  bool isLegalToInline(Region *dest, Region *src, bool wouldBeCloned,
+                       IRMapping &valueMapping) const final {
+    return true;
+  }
+
+  bool isLegalToInline(Operation *op, Region *dest, bool wouldBeCloned,
+                       IRMapping &valueMapping) const final {
+    return true;
+  }
+};
 
 class HALLoaderToVMConversionInterface : public VMConversionDialectInterface {
 public:
@@ -45,7 +66,7 @@ public:
 
 HALLoaderDialect::HALLoaderDialect(MLIRContext *context)
     : Dialect(getDialectNamespace(), context, TypeID::get<HALLoaderDialect>()) {
-  addInterfaces<HALLoaderToVMConversionInterface>();
+  addInterfaces<HALLoaderInlinerInterface, HALLoaderToVMConversionInterface>();
 
 #define GET_OP_LIST
   addOperations<
